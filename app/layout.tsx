@@ -1,20 +1,9 @@
 import * as React from "react";
-import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk as SpaceGrotest } from "next/font/google";
+
 import "./globals.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  variable: "--font-inter",
-});
-
-const spaceGrotesk = SpaceGrotest({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-space-grotesk",
-});
+import Providers from "./providers";
+import fontCls from "./fonts";
 
 export const metadata: Metadata = {
   title: "NextOverflow",
@@ -31,19 +20,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider
-      appearance={{
-        elements: {
-          formButtonPrimary: "primary-gradient",
-          footerActionLink: "primary-text-gradient hover:text-primary-500",
-        },
-      }}
-    >
-      <html lang="en">
-        <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en">
+      <body className={fontCls}>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
   );
 }
