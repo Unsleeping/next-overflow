@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-type Mode = "light" | "dark";
+import { Mode } from "@/types";
 
 interface ThemeContextType {
   mode: Mode;
@@ -16,19 +16,31 @@ const ThemeContext = React.createContext<ThemeContextType | undefined>(
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = React.useState<Mode>("dark");
 
-  // const updateTheme = (mode: Mode) => {
-  //   setMode(mode);
-  //   document.documentElement.classList.add(mode);
-  // };
+  const updateTheme = (mode: Mode) => {
+    setMode(mode);
+    if (mode === "dark") {
+      document.documentElement.classList.add(mode);
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  };
 
-  // const handleThemeChange = () => {
-  //   updateTheme(mode === "light" ? "dark" : "light");
-  // };
+  const handleThemeChange = () => {
+    if (
+      localStorage.theme === "dark" ||
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      updateTheme("dark");
+    } else {
+      updateTheme("light");
+    }
+  };
 
-  // React.useEffect(() => {
-  //   handleThemeChange();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [mode]);
+  React.useEffect(() => {
+    handleThemeChange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode]);
 
   return (
     <ThemeContext.Provider value={{ mode, setMode }}>
