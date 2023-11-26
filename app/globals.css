@@ -38,7 +38,11 @@ body {
   }
 
   .markdown {
-    @apply max-w-full prose dark:prose-p:text-light-700 dark:pro;
+    @apply max-w-full prose 
+        dark:prose-p:text-light-700 
+        dark:pros-ol:text-light-700
+        dark:pros-ul:text-light-700
+        dark:pros-strong:text-white;
   }
 
   .primary-gradient {
@@ -54,11 +58,17 @@ body {
   }
 
   .tab {
-    @apply min-h-full dark:bg-dark-400 bg-light-800 text-light-5;
+    @apply min-h-full dark:bg-dark-400 
+        bg-light-800 text-light-500 dark:data-
+        [state=active]:bg-dark-300 data-
+        [state=active]:bg-primary-100 data-
+        [state=active]:text-primary-500 !important;
   }
 
   .no-focus {
-    @apply focus-visible:ring-0 focus-visible:ring-transparent focu;
+    @apply focus-visible:ring-0 
+        focus-visible:ring-transparent 
+        focus-visible:ring:offset-0 !important;
   }
 }
 
@@ -113,7 +123,7 @@ code {
   word-wrap: break-word;
 
   -ms-word-break: break-all;
-  /* This is the dangerous one in WebKit, as it breaks things whereve */
+  /* This is the dangerous one in WebKit, as it breaks things wherever */
   word-break: break-all;
   /* Instead use this non-standard one: */
   word-break: break-word;
@@ -143,7 +153,7 @@ code {
 
 /* Clerk */
 .cl-internal-b3fm6y {
-  background: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);
+  background: linear-gradient(129deg, #ff7000 0%, #e2995f 100%) !important;
 }
 
 .hash-span {
