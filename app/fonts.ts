@@ -1,4 +1,4 @@
-import { Inter, Space_Grotesk as SpaceGrotest } from "next/font/google";
+import { Inter, Space_Grotesk as SpaceGrotesk } from "next/font/google";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -6,10 +6,10 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const spaceGrotesk = SpaceGrotest({
+const spaceGrotesk = SpaceGrotesk({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-space-grotesk",
+  variable: "--font-spaceGrotesk",
 });
 
 const fontCls = `${inter.variable} ${spaceGrotesk.variable}`;

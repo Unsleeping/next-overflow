@@ -22,7 +22,7 @@ const Logo = ({ pCls }: LogoProps) => {
           "h2-bold font-spaceGrotesk text-dark-100 dark:text-light-900 max-sm:hidden"
         }
       >
-        Next <span className="text-primary-500">Overflow</span>
+        Next<span className="text-primary-500">Overflow</span>
       </p>
     </Link>
   );

@@ -26,25 +26,39 @@ const AuthActions = ({ withSheetClose }: AuthActionsProps) => {
   const logInBtn = (
     <Link href="/sign-in">
       <Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg border px-4 py-3 shadow-none hover:border-light-400 dark:border-dark-400 hover:dark:border-light-400">
-        <span className="primary-text-gradient">Log In</span>
+        <Image
+          src="/assets/icons/account.svg"
+          width={20}
+          height={20}
+          className="invert-colors lg:hidden"
+          alt="logout"
+        />
+        <span className="primary-text-gradient max-lg:hidden">Log In</span>
       </Button>
     </Link>
   );
   const signUpBtn = (
     <Link href="/sign-up">
       <Button className="small-medium light-border-2 btn-tertiary min-h-[41px] w-full rounded-lg border px-4 py-3 shadow-none">
-        <span className="text-dark400_light900">Sign Up</span>
+        <Image
+          src="/assets/icons/sign-up.svg"
+          width={20}
+          height={20}
+          className="invert-colors lg:hidden"
+          alt="logout"
+        />
+        <span className="text-dark400_light900 max-lg:hidden">Sign Up</span>
       </Button>
     </Link>
   );
   const logOutBtn = (
     <SignOutButton>
-      <Button className="flex-start border border-transparent hover:border-light-400 dark:border-dark-400 hover:dark:border-light-400">
+      <Button className="flex-start border border-transparent hover:border-light-400  dark:border-transparent dark:text-light-900 hover:dark:border-light-400">
         <Image
           src="/assets/icons/logout.svg"
           width={24}
           height={24}
-          className="mr-[16px]"
+          className="mr-[16px] invert-0 dark:invert"
           alt="logout"
         />
         <span className="base-medium">Logout</span>
