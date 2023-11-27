@@ -2,56 +2,17 @@
 
 import * as React from "react";
 import Image from "next/image";
+import { useUser } from "@clerk/nextjs";
 
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Logo from "./Logo";
-import { SignedOut } from "@clerk/nextjs";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { sidebarLinks } from "@/constants";
-import { usePathname } from "next/navigation";
-
-const NavContent = () => {
-  const pathname = usePathname();
-  return (
-    <section className="flex h-full flex-col gap-6 pt-16">
-      {sidebarLinks.map(({ route, imgURL, label }) => {
-        const isActive =
-          (pathname.includes(route) && route.length > 1) || pathname === route;
-        return (
-          <SheetClose asChild key={route}>
-            <Link
-              href={route}
-              className={`${
-                isActive
-                  ? "primary-gradient rounded-lg text-light-900"
-                  : "text-dark300_light900"
-              } flex items-center justify-start gap-4 bg-transparent p-4`}
-            >
-              <Image
-                src={imgURL}
-                alt={label}
-                width={20}
-                height={20}
-                className={`${isActive ? "" : "invert-colors"}`}
-              />
-              <p className={`${isActive ? "base-bold" : "base-medium"}`}>
-                {label}
-              </p>
-            </Link>
-          </SheetClose>
-        );
-      })}
-    </section>
-  );
-};
+import NavContent from "../NavContent";
+import AuthActions from "../AuthActions";
 
 const MobileNav = () => {
+  const { isSignedIn } = useUser();
+  const navListHeightPercent = isSignedIn ? "90%" : "85%";
+  const navListHeightClassname = `max-h-[${navListHeightPercent}]`;
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -65,33 +26,17 @@ const MobileNav = () => {
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="background-light900_dark200 border-none"
+        className="background-light900_dark200 h-full border-none"
       >
         <Logo pCls="h2-bold text-dark100_light900 font-spaceGrotest" />
-        <div>
-          <SheetClose asChild>
-            <NavContent />
-          </SheetClose>
+        <div className="flex h-[calc(100%-31.2px)] flex-col justify-between">
+          <div className={`${navListHeightClassname} overflow-auto`}>
+            <NavContent withSheetClose />
+          </div>
 
-          <SignedOut>
-            <div className="flex flex-col gap-3">
-              <SheetClose asChild>
-                <Link href="/sign-in">
-                  <Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
-                    <span className="primary-text-gradient">Log In</span>
-                  </Button>
-                </Link>
-              </SheetClose>
-
-              <SheetClose asChild>
-                <Link href="/sign-up">
-                  <Button className="small-medium light-border-2 btn-tertiary min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
-                    <span className="text-dark400_light900">Sign Up</span>
-                  </Button>
-                </Link>
-              </SheetClose>
-            </div>
-          </SignedOut>
+          <div>
+            <AuthActions />
+          </div>
         </div>
       </SheetContent>
     </Sheet>
