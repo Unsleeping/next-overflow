@@ -3,7 +3,7 @@ import { SignedIn, UserButton } from "@clerk/nextjs";
 import Theme from "./Theme";
 import MobileNav from "./MobileNav";
 import Logo from "./Logo";
-import GlobalSearch from "../search/GlobalSearch";
+import GlobalSearch from "../shared/search/GlobalSearch";
 
 const Navbar = () => {
   return (

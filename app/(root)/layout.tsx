@@ -1,8 +1,8 @@
 import * as React from "react";
 
-import Navbar from "@/components/shared/navbar/Navbar";
-import LeftSidebar from "@/components/shared/left-sidebar/LeftSidebar";
-import RightSidebar from "@/components/shared/right-sidebar/RightSidebar";
+import Navbar from "@/components/navbar/Navbar";
+import LeftSidebar from "@/components/LeftSidebar";
+import RightSidebar from "@/components/RightSidebar";
 
 interface LayoutProps {
   children: React.ReactNode;
