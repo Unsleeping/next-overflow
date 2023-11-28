@@ -1,16 +1,14 @@
 import * as React from "react";
 
-import NavContent from "@/components/shared/NavContent";
 import AuthActions from "@/components/shared/AuthActions";
+import NavContent from "@/components/shared/NavContent";
 
 const LeftSidebar = () => {
   return (
-    <div className="fixed mt-[84px] min-h-screen w-fit border-r bg-light-900 px-[24px] pb-[16px] dark:border-dark-500 dark:bg-dark-500 max-sm:hidden lg:w-[266px]">
-      <div className="flex h-[calc(100vh-84px-16px)] flex-col justify-between">
-        <NavContent />
-        <AuthActions />
-      </div>
-    </div>
+    <section className="background-light900_dark200 light-border custom-scrollbar sticky left-0 top-0 flex h-screen flex-col justify-between overflow-y-auto border-r p-6 pt-36 shadow-light-300 dark:shadow-none max-sm:hidden lg:w-[266px]">
+      <NavContent sectionCls="flex-1" />
+      <AuthActions />
+    </section>
   );
 };
 

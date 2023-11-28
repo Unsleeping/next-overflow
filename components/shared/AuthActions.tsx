@@ -23,31 +23,48 @@ const RenderBtnHOC = ({ withSheetClose, children }: RenderBtnHOCProps) => {
 };
 
 const AuthActions = ({ withSheetClose }: AuthActionsProps) => {
+  const withImage = !withSheetClose;
   const logInBtn = (
     <Link href="/sign-in">
       <Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg border px-4 py-3 shadow-none hover:border-light-400 dark:border-dark-400 hover:dark:border-light-400">
-        <Image
-          src="/assets/icons/account.svg"
-          width={20}
-          height={20}
-          className="invert-colors lg:hidden"
-          alt="logout"
-        />
-        <span className="primary-text-gradient max-lg:hidden">Log In</span>
+        {withImage && (
+          <Image
+            src="/assets/icons/account.svg"
+            width={20}
+            height={20}
+            className="invert-colors lg:hidden"
+            alt="login"
+          />
+        )}
+        <span
+          className={`primary-text-gradient ${
+            withImage ? "max-lg:hidden" : ""
+          }`}
+        >
+          Log In
+        </span>
       </Button>
     </Link>
   );
   const signUpBtn = (
     <Link href="/sign-up">
       <Button className="small-medium light-border-2 btn-tertiary min-h-[41px] w-full rounded-lg border px-4 py-3 shadow-none">
-        <Image
-          src="/assets/icons/sign-up.svg"
-          width={20}
-          height={20}
-          className="invert-colors lg:hidden"
-          alt="logout"
-        />
-        <span className="text-dark400_light900 max-lg:hidden">Sign Up</span>
+        {withImage && (
+          <Image
+            src="/assets/icons/sign-up.svg"
+            width={20}
+            height={20}
+            className="invert-colors lg:hidden"
+            alt="signup"
+          />
+        )}
+        <span
+          className={`text-dark400_light900  ${
+            withImage ? "max-lg:hidden" : ""
+          }`}
+        >
+          Sign up
+        </span>
       </Button>
     </Link>
   );

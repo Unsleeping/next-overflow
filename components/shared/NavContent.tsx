@@ -10,25 +10,25 @@ import { SheetClose } from "@/components/ui/sheet";
 
 interface NavContentProps {
   withSheetClose?: boolean;
+  sectionCls?: string;
 }
 
 interface WrapperProps {
   children?: React.ReactNode;
 }
 
-const NavContent = ({ withSheetClose }: NavContentProps) => {
+const NavContent = ({ withSheetClose, sectionCls }: NavContentProps) => {
   const pathname = usePathname();
+  const sharedSectionClassname = "flex flex-col gap-6";
+  const sectionClassname = sectionCls || "h-full pt-16";
+  const Wrapper = ({ children }: WrapperProps) =>
+    withSheetClose ? <SheetClose asChild>{children}</SheetClose> : children;
+
   return (
-    <section className="flex h-full flex-col gap-6 pt-16">
+    <section className={`${sectionClassname} ${sharedSectionClassname}`}>
       {sidebarLinks.map(({ route, imgURL, label }) => {
         const isActive =
           (pathname.includes(route) && route.length > 1) || pathname === route;
-        const Wrapper = ({ children }: WrapperProps) =>
-          withSheetClose ? (
-            <SheetClose asChild>{children}</SheetClose>
-          ) : (
-            <React.Fragment>{children}</React.Fragment>
-          );
         return (
           <Wrapper key={route}>
             <Link
@@ -47,9 +47,9 @@ const NavContent = ({ withSheetClose }: NavContentProps) => {
                 className={`${isActive ? "" : "invert-colors"}`}
               />
               <p
-                className={`${
-                  isActive ? "base-bold" : "base-medium"
-                } max-lg:hidden`}
+                className={`${isActive ? "base-bold" : "base-medium"} ${
+                  withSheetClose ? "" : "max-lg:hidden"
+                }`}
               >
                 {label}
               </p>

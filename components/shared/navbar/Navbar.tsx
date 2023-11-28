@@ -7,7 +7,7 @@ import GlobalSearch from "../search/GlobalSearch";
 
 const Navbar = () => {
   return (
-    <nav className="flex-between dark:dark-gradient fixed z-50 max-h-[84px] w-full gap-5 border-b bg-light-900 p-6 shadow-light-300 dark:shadow-none sm:px-12">
+    <nav className="flex-between light-border background-light900_dark200 fixed z-50 max-h-[84px] w-full gap-5 border-b p-6 shadow-light-300 dark:shadow-none sm:px-12">
       <Logo />
       <GlobalSearch />
       <div className="flex-between gap-5">

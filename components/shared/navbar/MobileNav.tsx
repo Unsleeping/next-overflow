@@ -35,7 +35,7 @@ const MobileNav = () => {
           </div>
 
           <div>
-            <AuthActions />
+            <AuthActions withSheetClose />
           </div>
         </div>
       </SheetContent>
