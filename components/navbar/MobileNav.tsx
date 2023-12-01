@@ -6,8 +6,8 @@ import { useUser } from "@clerk/nextjs";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Logo from "./Logo";
-import NavContent from "../shared/NavContent";
-import AuthActions from "../shared/AuthActions";
+import NavContent from "@/components/shared/NavContent";
+import AuthActions from "@/components/shared/AuthActions";
 
 const MobileNav = () => {
   const { isSignedIn } = useUser();
