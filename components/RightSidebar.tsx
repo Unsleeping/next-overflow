@@ -1,7 +1,8 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import RenderTag from "./RenderTag";
+
+import RenderTag from "@/components/shared/RenderTag";
 
 const dummyTags = [
   { label: "Next.js", count: 18493, _id: "1" },
