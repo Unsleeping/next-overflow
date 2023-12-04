@@ -28,7 +28,9 @@ const Metric: React.FC<MetricProps> = ({
         alt={alt}
         width={16}
         height={16}
-        className={`object-contain ${href ? "rounded-full" : ""}`}
+        className={`object-fill ${
+          href ? "rounded-full" : ""
+        } min-h-[16px] min-w-[16px]`}
       />
       <p className={`${textStyles} flex items-center gap-1`}>
         {value}{" "}

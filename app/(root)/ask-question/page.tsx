@@ -12,7 +12,7 @@ const Page = async () => {
     redirect("sign-in");
   }
 
-  const mongoUser = await getUserById({ userId: "clerk123" });
+  const mongoUser = await getUserById({ userId });
 
   return (
     <div>
