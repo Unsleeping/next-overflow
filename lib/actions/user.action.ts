@@ -10,7 +10,7 @@ import {
   GetUserByIdParams,
   UpdateUserParams,
 } from "./shared.types";
-import Question from "@/database/question.model";
+// import Question from "@/database/question.model";
 
 export async function getUserById(params: GetUserByIdParams) {
   try {
@@ -52,7 +52,8 @@ export async function deleteUser(params: DeleteUserParams) {
   try {
     connectToDatabase();
     const { clerkId } = params;
-    const { value: user } = await User.findOneAndDelete<IUser>({ clerkId });
+    const user = await User.findOneAndDelete<IUser>({ clerkId });
+    console.log("user: ", user);
 
     if (!user) {
       throw new Error("User not found");
@@ -66,7 +67,7 @@ export async function deleteUser(params: DeleteUserParams) {
     // );
 
     // delete user questions
-    await Question.deleteMany({ author: user._id });
+    // await Question.deleteMany({ author: user._id });
 
     // TODO: delete user answers, comments, etc
   } catch (error) {
