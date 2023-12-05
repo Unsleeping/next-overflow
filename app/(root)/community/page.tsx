@@ -2,7 +2,7 @@ import * as React from "react";
 import Link from "next/link";
 
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
-import Filter from "@/components/Filter";
+import Filter from "@/components/shared/Filter";
 import UserCard from "@/components/cards/UserCard";
 import { getAllUsers } from "@/lib/actions/user.action";
 import { UserFilters } from "@/constants/filters";

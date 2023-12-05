@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
-import Filter from "@/components/Filter";
+import Filter from "@/components/shared/Filter";
 import { TagFilters } from "@/constants/filters";
 import NoResult from "@/components/shared/NoResult";
 import { getAllTags } from "@/lib/actions/tag.action";
