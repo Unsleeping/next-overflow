@@ -1,6 +1,7 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { ObjectId } from "mongoose";
 
 import Filter from "./shared/Filter";
 import { AnswerFilters } from "@/constants/filters";
@@ -60,7 +61,19 @@ const AllAnswers: React.FC<AllAnswersProps> = async ({
                   </div>
                 </Link>
                 <div className="flex justify-end">
-                  <Votes />
+                  <Votes
+                    type="Answer"
+                    itemId={JSON.stringify(answer._id)}
+                    userId={userId}
+                    upvotes={answer.upvotes.length}
+                    hasUpvoted={answer.upvotes.find(
+                      (u: ObjectId) => JSON.stringify(u) === userId
+                    )}
+                    downvotes={answer.downvotes.length}
+                    hasDownvoted={answer.downvotes.find(
+                      (d: ObjectId) => JSON.stringify(d) === userId
+                    )}
+                  />
                 </div>
               </div>
             </div>
