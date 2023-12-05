@@ -1,7 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ObjectId } from "mongoose";
 
 import Filter from "./shared/Filter";
 import { AnswerFilters } from "@/constants/filters";
@@ -64,15 +63,11 @@ const AllAnswers: React.FC<AllAnswersProps> = async ({
                   <Votes
                     type="Answer"
                     itemId={JSON.stringify(answer._id)}
-                    userId={userId}
+                    userId={JSON.stringify(userId)}
                     upvotes={answer.upvotes.length}
-                    hasUpvoted={answer.upvotes.find(
-                      (u: ObjectId) => JSON.stringify(u) === userId
-                    )}
+                    hasUpvoted={answer.upvotes.includes(userId)}
                     downvotes={answer.downvotes.length}
-                    hasDownvoted={answer.downvotes.find(
-                      (d: ObjectId) => JSON.stringify(d) === userId
-                    )}
+                    hasDownvoted={answer.downvotes.includes(userId)}
                   />
                 </div>
               </div>
