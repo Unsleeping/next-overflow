@@ -11,7 +11,6 @@ import {
   GetUserByIdParams,
   UpdateUserParams,
 } from "./shared.types";
-// import Question from "@/database/question.model";
 
 export async function getUserById(params: GetUserByIdParams) {
   try {
