@@ -12,6 +12,7 @@ import AnswerForm from "@/components/forms/AnswerForm";
 import { getUserById } from "@/lib/actions/user.action";
 import AllAnswers from "@/components/AllAnswers";
 import Votes from "@/components/shared/Votes";
+import { SavedQuestion } from "@/database/user.model";
 
 interface PageProps {
   params: { id: string };
@@ -56,7 +57,12 @@ const Page = async ({ params, searchParams }: PageProps) => {
               hasUpvoted={question.upvotes.includes(mongoUser._id)}
               downvotes={question.downvotes.length}
               hasDownvoted={question.downvotes.includes(mongoUser._id)}
-              hasSaved={mongoUser?.saved.includes(question._id)}
+              hasSaved={
+                !!mongoUser?.saved.find(
+                  (q: SavedQuestion) =>
+                    JSON.stringify(q._id) === JSON.stringify(question._id)
+                )
+              }
             />
           </div>
         </div>

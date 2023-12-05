@@ -1,5 +1,9 @@
 import { Schema, models, model, Document } from "mongoose";
 
+export interface SavedQuestion extends Document {
+  savedAt: Date;
+}
+
 export interface IUser extends Document {
   clerkId: string;
   name: string;
@@ -11,7 +15,7 @@ export interface IUser extends Document {
   location?: string;
   portfolioWebsite?: string;
   reputation?: number;
-  saved: Schema.Types.ObjectId[];
+  saved: SavedQuestion[];
   joinedAt: Date;
 }
 
@@ -26,7 +30,12 @@ const UserSchema = new Schema({
   location: { type: String },
   portfolioWebsite: { type: String },
   reputation: { type: Number, default: 0 },
-  saved: [{ type: Schema.Types.ObjectId, ref: "Question" }],
+  saved: [
+    {
+      question: { type: Schema.Types.ObjectId, ref: "Question" },
+      savedAt: { type: Date, default: Date.now },
+    },
+  ],
   joinedAt: { type: Date, default: Date.now },
 });
 
