@@ -22,6 +22,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { questionsSchema } from "@/lib/validations";
 import { createQuestion } from "@/lib/actions/question.action";
+import { getTinyMCEConfig } from "@/lib/utils";
+import { useTheme } from "@/context/ThemeProvider";
 
 const type: string = "create";
 
@@ -30,6 +32,7 @@ interface QuestionFormProps {
 }
 
 const QuestionForm = ({ mongoUserId }: QuestionFormProps) => {
+  const { mode } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
   const form = useForm<z.infer<typeof questionsSchema>>({
@@ -55,6 +58,7 @@ const QuestionForm = ({ mongoUserId }: QuestionFormProps) => {
       });
       router.push("/");
     } catch (error) {
+      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
@@ -133,32 +137,7 @@ const QuestionForm = ({ mongoUserId }: QuestionFormProps) => {
                   initialValue=""
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
-                  init={{
-                    height: 350,
-                    menubar: false,
-                    plugins: [
-                      "advlist",
-                      "autolink",
-                      "lists",
-                      "link",
-                      "image",
-                      "charmap",
-                      "preview",
-                      "anchor",
-                      "searchreplace",
-                      "visualblocks",
-                      "codesample",
-                      "fullscreen",
-                      "insertdatetime",
-                      "media",
-                      "table",
-                    ],
-                    toolbar:
-                      "undo redo | codesample | " +
-                      "bold italic forecolor | alignleft aligncenter " +
-                      "alignright alignjustify | bullist numlist",
-                    content_style: "body { font-family:Inter; font-size:16px }",
-                  }}
+                  init={getTinyMCEConfig(mode)}
                 />
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">

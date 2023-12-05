@@ -1,3 +1,8 @@
+import { Mode } from "@/types";
+import {
+  DARK_TINY_MCE_CONFIG,
+  LIGHT_TINY_MCE_CONFIG,
+} from "./../constants/index";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -66,4 +71,8 @@ export const formatAndDivideNumber = (num: number): string => {
   } else {
     return num.toString();
   }
+};
+
+export const getTinyMCEConfig = (mode: Mode) => {
+  return mode === "dark" ? DARK_TINY_MCE_CONFIG : LIGHT_TINY_MCE_CONFIG;
 };
