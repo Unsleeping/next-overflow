@@ -7,6 +7,7 @@ import {
   CreateQuestionParams,
   GetQuestionsParams,
   QuestionVoteParams,
+  ToggleSaveQuestionParams,
 } from "./shared.types.d";
 import { connectToDatabase } from "@/lib/mongoose";
 import Question from "@/database/question.model";
@@ -162,6 +163,47 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
     revalidatePath(path);
   } catch (error) {
     console.log("error downvoting question", error);
+    throw error;
+  }
+}
+
+export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
+  try {
+    connectToDatabase();
+
+    const { userId, questionId, path } = params;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const question = await Question.findById(questionId);
+
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
+    let updateQuery = {};
+
+    if (user.saved.includes(question._id)) {
+      updateQuery = {
+        $pull: { saved: questionId },
+      };
+    } else {
+      updateQuery = {
+        $addToSet: { saved: questionId },
+      };
+    }
+
+    await User.findByIdAndUpdate(userId, updateQuery, {
+      new: true,
+    });
+
+    revalidatePath(path);
+  } catch (error) {
+    console.log("error toggling save question", error);
     throw error;
   }
 }

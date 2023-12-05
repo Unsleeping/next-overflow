@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { formatAndDivideNumber } from "@/lib/utils";
 import {
   downvoteQuestion,
+  toggleSaveQuestion,
   upvoteQuestion,
 } from "@/lib/actions/question.action";
 import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.action";
@@ -80,7 +81,18 @@ const Votes: React.FC<VotesProps> = ({
       // todo: show a toast
     }
   };
-  const handleSave = () => {};
+  const handleSave = async () => {
+    if (!userId) {
+      return;
+    }
+    if (type === "Question") {
+      await toggleSaveQuestion({
+        questionId: JSON.parse(itemId),
+        userId: JSON.parse(userId),
+        path: pathname,
+      });
+    }
+  };
   return (
     <div className="flex gap-5">
       <div className="flex-center gap-2.5">
