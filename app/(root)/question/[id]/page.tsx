@@ -60,7 +60,7 @@ const Page = async ({ params, searchParams }: PageProps) => {
               hasSaved={
                 !!mongoUser?.saved.find(
                   (q: SavedQuestion) =>
-                    JSON.stringify(q._id) === JSON.stringify(question._id)
+                    JSON.stringify(q.question) === JSON.stringify(question._id)
                 )
               }
             />

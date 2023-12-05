@@ -18,7 +18,7 @@ import {
   getDownvoteUpdateQuery,
   getUpvoteUpdateQuery,
 } from "@/lib/actions/utils";
-import { getUserById } from "./user.action";
+import { FilterQuery } from "mongoose";
 
 export async function getQuestions(params: GetQuestionsParams) {
   try {
@@ -186,17 +186,17 @@ export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
 
     let updateQuery = {};
 
-    const isQuestionSaved = !!user.saved.find((q: IQuestion) => {
-      return JSON.stringify(q._id) === JSON.stringify(questionId);
+    const isQuestionSaved = !!user.saved.find((q: SavedQuestion) => {
+      return JSON.stringify(q.question) === JSON.stringify(questionId);
     });
 
     if (isQuestionSaved) {
       updateQuery = {
-        $pull: { saved: { _id: questionId } },
+        $pull: { saved: { question: questionId } },
       };
     } else {
       updateQuery = {
-        $addToSet: { saved: { _id: questionId, savedAt: new Date() } },
+        $addToSet: { saved: { question: questionId, savedAt: new Date() } },
       };
     }
 
@@ -217,42 +217,64 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
 
     const {
       clerkId,
-      // page, pageSize, filter, searchQuery
+      // page = 1, pageSize = 10, filter,
+      searchQuery,
     } = params;
 
-    const mongoUser = await getUserById({ userId: clerkId });
+    const query: FilterQuery<typeof Question> = searchQuery
+      ? {
+          title: {
+            $regex: new RegExp(searchQuery, "i"),
+          },
+        }
+      : {};
 
-    const user = await User.findById(mongoUser._id);
+    /**
+     * below the prev query to get saved questions from model when no savedAt field existed in UserSchema
+     */
+
+    // const user = await User.findOne({ clerkId }).populate({
+    //   path: "saved",
+    //   match: query,
+    //   options: {
+    //     sort: { createdAt: -1 },
+    //   },
+    //   populate: [
+    //     { path: "tags", model: Tag, select: "_id name" },
+    //     { path: "author", model: User, select: "_id clerkId name picture" },
+    //   ],
+    // });
+
+    const user = await User.findOne({ clerkId }).populate({
+      path: "saved",
+      populate: {
+        match: query,
+        path: "question",
+        model: Question,
+        populate: [
+          { path: "tags", model: Tag, select: "_id name" },
+          { path: "author", model: User, select: "_id clerkId name picture" },
+        ],
+      },
+    });
 
     if (!user) {
       throw new Error("User not found");
     }
 
-    const questions = await Question.find({ _id: { $in: user.saved } })
-      .populate({
-        path: "tags",
-        model: Tag,
-      })
-      .populate({ path: "author", model: User });
+    const array = user.saved as { question: IQuestion; savedAt: Date }[];
 
-    const sortedQuestions = questions.sort((first, second) => {
-      const userQuestionFirst = user.saved.find(
-        (q: SavedQuestion) =>
-          JSON.stringify(q._id) === JSON.stringify(first._id)
-      );
-      const userQuestionSecond = user.saved.find(
-        (q: SavedQuestion) =>
-          JSON.stringify(q._id) === JSON.stringify(second._id)
-      );
-      if (userQuestionFirst && userQuestionSecond) {
-        const savedAtFirst = userQuestionFirst.savedAt;
-        const savedAtSecond = userQuestionSecond.savedAt;
-        return savedAtSecond.getTime() - savedAtFirst.getTime();
-      }
-      return -1;
-    });
+    // Filter out questions that don't match the searchQuery
+    const matchedArray = array.filter((entry) => entry.question);
 
-    return { questions: sortedQuestions };
+    // Sort the user.saved array based on the savedAt property in descending order
+    const sortedArray = matchedArray.sort(
+      (a, b) => b.savedAt.getTime() - a.savedAt.getTime()
+    );
+
+    // prepare output to return @type Question[], not @type {question: Question}[]
+    const savedQuestion = sortedArray.map((entry) => entry.question);
+    return { questions: savedQuestion };
   } catch (error) {
     console.log("error getting saved questions", error);
     throw error;

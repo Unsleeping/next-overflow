@@ -1,7 +1,8 @@
 import { Schema, models, model, Document } from "mongoose";
 
-export interface SavedQuestion extends Document {
+export interface SavedQuestion {
   savedAt: Date;
+  question: Schema.Types.ObjectId;
 }
 
 export interface IUser extends Document {
