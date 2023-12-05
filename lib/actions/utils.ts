@@ -1,12 +1,14 @@
+interface GetVoteQueryArgs {
+  hasUpvoted: boolean;
+  hasDownvoted: boolean;
+  userId: string;
+}
+
 export const getDownvoteUpdateQuery = ({
   hasUpvoted,
   hasDownvoted,
   userId,
-}: {
-  hasUpvoted: boolean;
-  hasDownvoted: boolean;
-  userId: string;
-}) => {
+}: GetVoteQueryArgs) => {
   let updateQuery = {};
   if (hasDownvoted) {
     updateQuery = { $pull: { downvotes: userId } };
@@ -26,11 +28,7 @@ export const getUpvoteUpdateQuery = ({
   hasUpvoted,
   hasDownvoted,
   userId,
-}: {
-  hasUpvoted: boolean;
-  hasDownvoted: boolean;
-  userId: string;
-}) => {
+}: GetVoteQueryArgs) => {
   let updateQuery = {};
   if (hasUpvoted) {
     updateQuery = { $pull: { upvotes: userId } };
