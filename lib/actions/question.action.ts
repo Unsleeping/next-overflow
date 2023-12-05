@@ -1,13 +1,18 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
+import {
+  GetQuestionByIdParams,
+  CreateQuestionParams,
+  GetQuestionsParams,
+} from "./shared.types.d";
 import { connectToDatabase } from "@/lib/mongoose";
-import { CreateQuestionParams, GetQuestionsParams } from "./shared.types";
 import Question from "@/database/question.model";
 import Tag from "@/database/tag.model";
 import User from "@/database/user.model";
-import { revalidatePath } from "next/cache";
 
-export async function getQuestion(params: GetQuestionsParams) {
+export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase();
 
@@ -66,5 +71,34 @@ export async function createQuestion(params: CreateQuestionParams) {
   } catch (e) {
     console.log("createQuestion error: ", e);
     throw e;
+  }
+}
+
+export async function getQuestionById(params: GetQuestionByIdParams) {
+  try {
+    connectToDatabase();
+
+    const { questionId } = params;
+
+    const question = await Question.findById(questionId)
+      // to get not the tag references but the tags themselves
+      .populate({
+        path: "tags",
+        model: Tag,
+        select: "_id name", // select specific properties
+      })
+      // to get not the author references but the users themselves
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id clerkId name picture", // select specific properties
+      })
+      // to sort the questions by their createdAt date, descending order
+      .sort({ createdAt: -1 });
+
+    return question;
+  } catch (error) {
+    console.log("error getting question by id", error);
+    throw error;
   }
 }

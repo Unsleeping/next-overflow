@@ -3,15 +3,15 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
-import Filter from "@/components/Filter";
+import Filter from "@/components/shared/Filter";
 import { HomePageFilters } from "@/constants/filters";
 import HomeFilters from "@/components/home/HomeFilters";
 import NoResult from "@/components/shared/NoResult";
 import QuestionCard from "@/components/cards/QuestionCard";
-import { getQuestion } from "@/lib/actions/question.action";
+import { getQuestions } from "@/lib/actions/question.action";
 
 const Home = async () => {
-  const result = await getQuestion({});
+  const result = await getQuestions({});
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
