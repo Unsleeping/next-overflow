@@ -2,6 +2,7 @@ import * as React from "react";
 import type { Metadata } from "next";
 
 import "./globals.css";
+import "@/styles/prism.css";
 import Providers from "./providers";
 import fontCls from "./fonts";
 
