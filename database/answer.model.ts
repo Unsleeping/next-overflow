@@ -9,7 +9,7 @@ export interface IAnswer extends Document {
   createdAt: Date;
 }
 
-const AnswersSchema = new Schema({
+const AnswerSchema = new Schema({
   author: { type: Schema.Types.ObjectId, ref: "User", required: true },
   question: { type: Schema.Types.ObjectId, ref: "Question", required: true },
   content: { type: String, required: true },
@@ -18,6 +18,6 @@ const AnswersSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-const Answer = models.Answer || model("Answer", AnswersSchema);
+const Answer = models.Answer || model("Answer", AnswerSchema);
 
 export default Answer;
