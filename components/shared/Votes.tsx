@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { formatAndDivideNumber } from "@/lib/utils";
 import {
@@ -11,6 +11,7 @@ import {
   upvoteQuestion,
 } from "@/lib/actions/question.action";
 import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.action";
+import { viewQuestion } from "@/lib/actions/interaction.action";
 
 interface VotesProps {
   type: string;
@@ -34,6 +35,15 @@ const Votes: React.FC<VotesProps> = ({
   hasSaved,
 }) => {
   const pathname = usePathname();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    viewQuestion({
+      questionId: JSON.parse(itemId),
+      userId: userId ? JSON.parse(userId) : undefined,
+    });
+  }, [itemId, userId, pathname, router]);
+
   const handleVote = async (action: string) => {
     if (!userId) {
       return;
