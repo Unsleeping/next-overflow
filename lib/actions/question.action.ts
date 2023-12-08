@@ -9,6 +9,7 @@ import {
   QuestionVoteParams,
   ToggleSaveQuestionParams,
   GetSavedQuestionsParams,
+  GetQuestionsByTagIdParams,
 } from "./shared.types.d";
 import { connectToDatabase } from "@/lib/mongoose";
 import Question, { IQuestion } from "@/database/question.model";
@@ -100,13 +101,36 @@ export async function getQuestionById(params: GetQuestionByIdParams) {
         path: "author",
         model: User,
         select: "_id clerkId name picture", // select specific properties
-      })
-      // to sort the questions by their createdAt date, descending order
-      .sort({ createdAt: -1 });
+      });
 
     return question;
   } catch (error) {
     console.log("error getting question by id", error);
+    throw error;
+  }
+}
+
+export async function getQuestionByTagId(params: GetQuestionsByTagIdParams) {
+  try {
+    connectToDatabase();
+
+    const { tagId } = params;
+    const questions = await Question.find({ tags: { $in: [tagId] } })
+      .populate({
+        path: "tags",
+        model: Tag,
+        select: "_id name", // select specific properties
+      })
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id clerkId name picture", // select specific properties
+      })
+      .sort({ createdAt: -1 });
+
+    return questions;
+  } catch (error) {
+    console.log("error getting question by tag id", error);
     throw error;
   }
 }
