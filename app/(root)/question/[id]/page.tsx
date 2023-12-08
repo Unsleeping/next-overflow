@@ -13,13 +13,9 @@ import { getUserById } from "@/lib/actions/user.action";
 import AllAnswers from "@/components/AllAnswers";
 import Votes from "@/components/shared/Votes";
 import { SavedQuestion } from "@/database/user.model";
+import { URLProps } from "@/types";
 
-interface PageProps {
-  params: { id: string };
-  searchParams: any;
-}
-
-const Page = async ({ params, searchParams }: PageProps) => {
+const Page = async ({ params, searchParams }: URLProps) => {
   const question = await getQuestionById({ questionId: params.id });
   const { userId: clerkId } = auth();
 

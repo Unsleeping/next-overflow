@@ -33,10 +33,7 @@ export interface ParamsProps {
 export interface SearchParamsProps {
   searchParams: { [key: string]: string | undefined };
 }
-export interface URLProps {
-  params: { id: string };
-  searchParams: { [key: string]: string | undefined };
-}
+export type URLProps = ParamsProps & SearchParamsProps;
 export interface BadgeCounts {
   GOLD: number;
   SILVER: number;
