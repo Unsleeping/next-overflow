@@ -43,3 +43,10 @@ export const getUpvoteUpdateQuery = ({
 
   return updateQuery;
 };
+
+export const getJoinedDate = (joinedAt: Date) => {
+  const month = joinedAt.toLocaleString("default", { month: "long" });
+  const year = joinedAt.getFullYear();
+  const joinedDate = `${month} ${year}`;
+  return joinedDate;
+};

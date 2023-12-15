@@ -16,6 +16,7 @@ interface QuestionCardProps {
     _id: string;
     name: string;
     picture: string;
+    clerkId: string;
   };
   upvotes: string[];
   views: number;
@@ -61,7 +62,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           value={author.name}
           title={` - asked ${getTimestamp(createdAt)}`}
           textStyles="body-medium text-dark400_light700"
-          href={`/profile/${author._id}`}
+          href={`/profile/${author.clerkId}`}
           isAuthor
         />
         <Metric

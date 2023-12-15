@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 
 import { sidebarLinks } from "@/constants";
 import { SheetClose } from "@/components/ui/sheet";
@@ -18,6 +19,7 @@ interface WrapperProps {
 }
 
 const NavContent = ({ withSheetClose, sectionCls }: NavContentProps) => {
+  const { userId } = useAuth();
   const pathname = usePathname();
   const sharedSectionClassname = "flex flex-col gap-6";
   const sectionClassname = sectionCls || "h-full pt-16";
@@ -29,10 +31,18 @@ const NavContent = ({ withSheetClose, sectionCls }: NavContentProps) => {
       {sidebarLinks.map(({ route, imgURL, label }) => {
         const isActive =
           (pathname.includes(route) && route.length > 1) || pathname === route;
+        let resultRoute = route;
+        if (route === "/profile") {
+          if (userId) {
+            resultRoute = `${route}/${userId}`;
+          } else {
+            return null;
+          }
+        }
         return (
           <Wrapper key={route}>
             <Link
-              href={route}
+              href={resultRoute}
               className={`${
                 isActive
                   ? "primary-gradient rounded-lg text-light-900"
