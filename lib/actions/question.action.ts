@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { FilterQuery } from "mongoose";
 
 import {
   GetQuestionByIdParams,
@@ -10,16 +11,18 @@ import {
   ToggleSaveQuestionParams,
   GetSavedQuestionsParams,
   GetQuestionsByTagIdParams,
+  DeleteQuestionParams,
 } from "./shared.types.d";
-import { connectToDatabase } from "@/lib/mongoose";
 import Question, { IQuestion } from "@/database/question.model";
 import User, { SavedQuestion } from "@/database/user.model";
 import Tag from "@/database/tag.model";
+import Interaction from "@/database/interaction.model";
+import Answer from "@/database/answer.model";
+import { connectToDatabase } from "@/lib/mongoose";
 import {
   getDownvoteUpdateQuery,
   getUpvoteUpdateQuery,
 } from "@/lib/actions/utils";
-import { FilterQuery } from "mongoose";
 
 export async function getQuestions(params: GetQuestionsParams) {
   try {
@@ -318,6 +321,31 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
     return { questions: savedQuestion };
   } catch (error) {
     console.log("error getting saved questions", error);
+    throw error;
+  }
+}
+
+export async function deleteQuestion(params: DeleteQuestionParams) {
+  try {
+    connectToDatabase();
+
+    const { questionId, path } = params;
+
+    await Question.deleteOne({ _id: questionId });
+    await Answer.deleteMany({ question: questionId });
+    await Interaction.deleteMany({ question: questionId });
+    await Tag.updateMany(
+      { questions: questionId },
+      {
+        $pull: {
+          getSavedQuestions: questionId,
+        },
+      }
+    );
+
+    revalidatePath(path);
+  } catch (error) {
+    console.log("error deleting question", error);
     throw error;
   }
 }
