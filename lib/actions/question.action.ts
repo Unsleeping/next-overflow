@@ -12,6 +12,7 @@ import {
   GetSavedQuestionsParams,
   GetQuestionsByTagIdParams,
   DeleteQuestionParams,
+  EditQuestionParams,
 } from "./shared.types.d";
 import Question, { IQuestion } from "@/database/question.model";
 import User, { SavedQuestion } from "@/database/user.model";
@@ -82,6 +83,31 @@ export async function createQuestion(params: CreateQuestionParams) {
     revalidatePath(path);
   } catch (e) {
     console.log("createQuestion error: ", e);
+    throw e;
+  }
+}
+
+export async function editQuestion(params: EditQuestionParams) {
+  try {
+    connectToDatabase();
+
+    const { questionId, title, content, path } = params;
+
+    const question = await Question.findById(questionId).populate("tags");
+
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
+    question.title = title;
+    question.content = content;
+
+    await question.save();
+
+    // purge the cached page for the question's path
+    revalidatePath(path);
+  } catch (e) {
+    console.log("editQuestion error: ", e);
     throw e;
   }
 }
