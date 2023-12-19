@@ -73,12 +73,12 @@ const AuthActions = ({ withSheetClose }: AuthActionsProps) => {
       <Button className="flex-start border border-transparent hover:border-light-400  dark:border-transparent dark:text-light-900 hover:dark:border-light-400">
         <Image
           src="/assets/icons/logout.svg"
-          width={24}
-          height={24}
-          className="mr-[16px] invert-0 dark:invert"
+          width={20}
+          height={20}
+          className="mr-[16px] invert-0 dark:invert max-lg:mr-0"
           alt="logout"
         />
-        <span className="base-medium">Logout</span>
+        <span className="base-medium max-lg:hidden">Logout</span>
       </Button>
     </SignOutButton>
   );

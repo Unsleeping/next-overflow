@@ -40,3 +40,18 @@ export async function getAllTags(params: GetAllTagsParams) {
     throw error;
   }
 }
+
+export async function getTopPopularTags() {
+  try {
+    connectToDatabase();
+    const tags = await Tag.aggregate([
+      { $project: { name: 1, numberOfQuestions: { $size: "$questions" } } },
+      { $sort: { numberOfQuestions: -1 } },
+      { $limit: 5 },
+    ]);
+    return tags;
+  } catch (error) {
+    console.log("error getting top popular tags", error);
+    throw error;
+  }
+}
