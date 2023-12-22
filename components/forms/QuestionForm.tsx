@@ -40,7 +40,8 @@ const QuestionForm = ({
   const { mode } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
-  const parsedQuestionDetails = JSON.parse(questionDetails || "");
+  const parsedQuestionDetails =
+    questionDetails && JSON.parse(questionDetails || "");
   const form = useForm<z.infer<typeof questionsSchema>>({
     resolver: zodResolver(questionsSchema),
     defaultValues: {
@@ -59,7 +60,7 @@ const QuestionForm = ({
         await editQuestion({
           title: values.title,
           content: values.explanation,
-          questionId: parsedQuestionDetails._id,
+          questionId: parsedQuestionDetails?._id,
           path: pathname,
         });
 

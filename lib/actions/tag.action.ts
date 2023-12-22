@@ -1,5 +1,7 @@
 "use server";
 
+import { FilterQuery } from "mongoose";
+
 import User from "@/database/user.model";
 import { connectToDatabase } from "@/lib/mongoose";
 import { GetAllTagsParams, GetTopInteractedTagsParams } from "./shared.types.d";
@@ -33,7 +35,22 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
 export async function getAllTags(params: GetAllTagsParams) {
   try {
     connectToDatabase();
-    const tags = await Tag.find({});
+    const {
+      // page = 1, pageSize = 10, filter,
+      searchQuery,
+    } = params;
+
+    const query: FilterQuery<typeof Tag> = {};
+
+    if (searchQuery) {
+      query.$or = [
+        {
+          name: { $regex: new RegExp(searchQuery, "i") },
+        },
+      ];
+    }
+
+    const tags = await Tag.find(query);
     return tags;
   } catch (error) {
     console.log("error getting all tags", error);

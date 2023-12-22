@@ -29,7 +29,22 @@ export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase();
 
-    const questions = await Question.find({})
+    const {
+      // page, pageSize,
+      searchQuery,
+      // filter
+    } = params;
+
+    const query: FilterQuery<typeof Question> = {};
+
+    if (searchQuery) {
+      query.$or = [
+        { title: { $regex: new RegExp(searchQuery, "i") } },
+        { content: { $regex: new RegExp(searchQuery, "i") } },
+      ];
+    }
+
+    const questions = await Question.find(query)
       // to get not the tag references but the tags themselves
       .populate({
         path: "tags",

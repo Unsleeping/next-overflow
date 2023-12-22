@@ -17,7 +17,7 @@ const Page: React.FC<URLProps> = async ({ params, searchParams }) => {
       <h1 className="h1-bold text-dark100_light900">Tag: {result.tagTitle}</h1>
       <div className="mt-11 w-full">
         <LocalSearchbar
-          route="/"
+          route={`/tags/${params.id}`}
           iconPosition="left"
           imgSrc="/assets/icons/search.svg"
           placeholder="Search for questions"
