@@ -49,7 +49,25 @@ export async function getAnswers(params: GetAnswersParams) {
   try {
     connectToDatabase();
 
-    const { questionId } = params;
+    const { questionId, sortBy } = params;
+
+    // to sort the answers by their createdAt date, descending order
+    let sortOptions: Record<string, 1 | -1> = { createdAt: -1 };
+
+    switch (sortBy) {
+      case "highestUpvotes":
+        sortOptions = { upvotes: -1 };
+        break;
+      case "lowestUpvotes":
+        sortOptions = { upvotes: 1 };
+        break;
+      case "recent":
+        sortOptions = { createdAt: -1 };
+        break;
+      case "old":
+        sortOptions = { createdAt: 1 };
+        break;
+    }
 
     const answers = await Answer.find({ question: questionId })
       // to get not the author references but the users themselves
@@ -58,8 +76,7 @@ export async function getAnswers(params: GetAnswersParams) {
         model: User,
         select: "_id clerkId name picture", // select specific properties
       })
-      // to sort the answers by their createdAt date, descending order
-      .sort({ createdAt: -1 });
+      .sort(sortOptions);
 
     return { answers };
   } catch (error) {

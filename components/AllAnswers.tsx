@@ -13,7 +13,7 @@ interface AllAnswersProps {
   questionId: string;
   userId: string;
   totalAnswers: number;
-  page?: number;
+  page?: string;
   filter?: string;
 }
 
@@ -26,6 +26,8 @@ const AllAnswers: React.FC<AllAnswersProps> = async ({
 }) => {
   const result = await getAnswers({
     questionId,
+    page: page ? +page : 1,
+    sortBy: filter,
   });
   return (
     <div className="mt-11">

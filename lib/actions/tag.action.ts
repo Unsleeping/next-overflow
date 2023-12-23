@@ -36,7 +36,8 @@ export async function getAllTags(params: GetAllTagsParams) {
   try {
     connectToDatabase();
     const {
-      // page = 1, pageSize = 10, filter,
+      // page = 1, pageSize = 10,
+      filter,
       searchQuery,
     } = params;
 
@@ -50,7 +51,24 @@ export async function getAllTags(params: GetAllTagsParams) {
       ];
     }
 
-    const tags = await Tag.find(query);
+    let sortOptions = {};
+
+    switch (filter) {
+      case "popular":
+        sortOptions = { questions: -1 };
+        break;
+      case "recent":
+        sortOptions = { createdOn: -1 };
+        break;
+      case "name":
+        sortOptions = { name: 1 };
+        break;
+      case "old":
+        sortOptions = { createdOn: 1 };
+        break;
+    }
+
+    const tags = await Tag.find(query).sort(sortOptions);
     return tags;
   } catch (error) {
     console.log("error getting all tags", error);
