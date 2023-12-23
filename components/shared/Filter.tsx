@@ -51,7 +51,7 @@ const Filter: React.FC<FilterProps> = ({
             <SelectValue placeholder="Select a Filter" />
           </div>
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="background-light900_dark200">
           <SelectGroup>
             {filters.map((filter) => (
               <SelectItem
