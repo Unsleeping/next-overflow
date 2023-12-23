@@ -14,7 +14,7 @@ import {
   DeleteQuestionParams,
   EditQuestionParams,
 } from "./shared.types.d";
-import Question, { IQuestion } from "@/database/question.model";
+import Question from "@/database/question.model";
 import User, { SavedQuestion } from "@/database/user.model";
 import Tag from "@/database/tag.model";
 import Interaction from "@/database/interaction.model";
@@ -314,86 +314,82 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
   try {
     connectToDatabase();
 
-    const {
-      clerkId,
-      // page = 1, pageSize = 10,
-      filter,
-      searchQuery,
-    } = params;
+    const { clerkId, filter, searchQuery } = params;
 
     const query: FilterQuery<typeof Question> = searchQuery
       ? {
-          title: {
+          "saved.question.title": {
             $regex: new RegExp(searchQuery, "i"),
           },
         }
       : {};
 
-    let sortOptions: Record<string, 1 | -1> = { createdAt: -1 };
+    let sortOptions: Record<string, 1 | -1> = {
+      "savedQuestions.createdAt": -1,
+    };
+
     switch (filter) {
-      case "most_recent": {
-        sortOptions = { createdAt: -1 };
+      case "most_recent":
+        sortOptions = { "savedQuestions.createdAt": -1 };
         break;
-      }
-      case "oldest": {
-        sortOptions = { createdAt: 1 };
+      case "oldest":
+        sortOptions = { "savedQuestions.createdAt": 1 };
         break;
-      }
-      case "most_voted": {
-        sortOptions = { upvotes: -1 };
+      case "most_voted":
+        sortOptions = { "savedQuestions.upvotes": -1 };
         break;
-      }
-      case "most_viewed": {
-        sortOptions = { views: -1 };
+      case "most_viewed":
+        sortOptions = { "savedQuestions.views": -1 };
         break;
-      }
-      case "most_answered": {
-        sortOptions = { answers: -1 };
+      case "most_answered":
+        sortOptions = { "savedQuestions.answers": -1 };
         break;
-      }
     }
 
-    const user = await User.findOne({ clerkId }).populate({
-      path: "saved.question",
-      match: query,
-      options: {
-        populate: [
-          { path: "tags", model: Tag, select: "_id name" },
-          { path: "author", model: User, select: "_id clerkId name picture" },
-        ],
+    const user = await User.aggregate([
+      { $match: { clerkId } },
+      // { $sort: { "saved.savedAt": -1 } },
+      {
+        $lookup: {
+          from: "questions",
+          localField: "saved.question",
+          foreignField: "_id",
+          as: "savedQuestions",
+        },
       },
-    });
+      { $unwind: "$savedQuestions" },
+      {
+        $lookup: {
+          from: "tags",
+          localField: "savedQuestions.tags",
+          foreignField: "_id",
+          as: "savedQuestions.tags",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "savedQuestions.author",
+          foreignField: "_id",
+          as: "savedQuestions.author",
+        },
+      },
+      { $unwind: "$savedQuestions.author" },
+      { $match: query },
+      { $sort: sortOptions },
+      {
+        $group: {
+          _id: "$_id",
+          savedQuestions: { $push: "$savedQuestions" },
+        },
+      },
+    ]);
 
-    if (!user) {
-      throw new Error("User not found");
+    if (!user || user.length === 0) {
+      throw new Error("User not found or no saved questions");
     }
 
-    let sortedAndPopulatedQuestions = (
-      user.saved as { question: IQuestion; savedAt: Date }[]
-    ).map((savedItem) => savedItem.question);
-
-    if (filter && sortOptions) {
-      // TODO: many questions more memory will be used in the future, need to sort on a MongoDB side
-      sortedAndPopulatedQuestions = sortedAndPopulatedQuestions.sort((a, b) => {
-        const filterKey = (Object.keys(sortOptions) as (keyof IQuestion)[])[0];
-        const filterValue = sortOptions[filterKey];
-        const aValue = a[filterKey];
-        const bValue = b[filterKey];
-
-        if (
-          typeof aValue === "object" &&
-          typeof bValue === "object" &&
-          typeof aValue?.length !== "undefined" &&
-          typeof bValue?.length !== "undefined"
-        ) {
-          return filterValue * (aValue.length - bValue.length);
-        }
-
-        return filterValue * (aValue - bValue);
-      });
-    }
-
-    return { questions: sortedAndPopulatedQuestions };
+    return { questions: user[0].savedQuestions };
   } catch (error) {
     console.log("error getting saved questions", error);
     throw error;
