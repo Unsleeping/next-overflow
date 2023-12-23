@@ -325,7 +325,7 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
       : {};
 
     let sortOptions: Record<string, 1 | -1> = {
-      "savedQuestions.createdAt": -1,
+      "savedQuestions.savedAt": -1,
     };
 
     switch (filter) {
@@ -348,7 +348,6 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
 
     const user = await User.aggregate([
       { $match: { clerkId } },
-      // { $sort: { "saved.savedAt": -1 } },
       {
         $lookup: {
           from: "questions",
@@ -375,6 +374,16 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
         },
       },
       { $unwind: "$savedQuestions.author" },
+      {
+        $addFields: {
+          "savedQuestions.savedAt": {
+            $arrayElemAt: [
+              "$saved.savedAt",
+              { $indexOfArray: ["$saved.question", "$savedQuestions._id"] },
+            ],
+          },
+        },
+      },
       { $match: query },
       { $sort: sortOptions },
       {
