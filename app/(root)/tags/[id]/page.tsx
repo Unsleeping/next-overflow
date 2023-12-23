@@ -5,11 +5,12 @@ import NoResult from "@/components/shared/NoResult";
 import QuestionCard from "@/components/cards/QuestionCard";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { URLProps } from "@/types";
+import Pagination from "@/components/shared/Pagination";
 
 const Page: React.FC<URLProps> = async ({ params, searchParams }) => {
   const result = await getQuestionsByTagId({
     tagId: params.id,
-    page: 1,
+    page: searchParams?.page ? +searchParams.page : 1,
     searchQuery: searchParams.q,
   });
   return (
@@ -47,6 +48,12 @@ const Page: React.FC<URLProps> = async ({ params, searchParams }) => {
             linkTitle="Ask a Question"
           />
         )}
+      </div>
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={result.isNext}
+        />
       </div>
     </>
   );

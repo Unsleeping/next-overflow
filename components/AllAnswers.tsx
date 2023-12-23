@@ -8,6 +8,7 @@ import { getAnswers } from "@/lib/actions/answer.action";
 import { getTimestamp } from "@/lib/utils";
 import ParseHTML from "./shared/ParseHTML";
 import Votes from "./shared/Votes";
+import Pagination from "./shared/Pagination";
 
 interface AllAnswersProps {
   questionId: string;
@@ -77,6 +78,9 @@ const AllAnswers: React.FC<AllAnswersProps> = async ({
             <ParseHTML data={answer.content} />
           </article>
         ))}
+      </div>
+      <div className="mt-10">
+        <Pagination pageNumber={page ? +page : 1} isNext={result.isNext} />
       </div>
     </div>
   );

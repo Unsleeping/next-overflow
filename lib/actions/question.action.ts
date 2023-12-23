@@ -29,11 +29,10 @@ export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase();
 
-    const {
-      // page, pageSize,
-      searchQuery,
-      filter,
-    } = params;
+    const { page = 1, pageSize = 20, searchQuery, filter } = params;
+
+    // calculate the number of posts to skip based on the page number and page size
+    const skipAmount = (page - 1) * pageSize;
 
     const query: FilterQuery<typeof Question> = {};
 
@@ -67,9 +66,14 @@ export async function getQuestions(params: GetQuestionsParams) {
       // to get not the author references but the users themselves
       .populate({ path: "author", model: User })
       // to sort the questions by their createdAt date, descending order
-      .sort(sortOptions);
+      .sort(sortOptions)
+      .skip(skipAmount)
+      .limit(pageSize);
 
-    return { questions };
+    const totalQuestions = await Question.countDocuments(query);
+    const isNext = totalQuestions > skipAmount + questions.length;
+
+    return { questions, isNext };
   } catch (error) {
     console.log("error getting questions", error);
     throw error;
@@ -172,22 +176,24 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
   try {
     connectToDatabase();
 
-    const {
-      tagId,
-      // page = 1, pageSize = 10,
-      searchQuery,
-    } = params;
+    const { tagId, page = 1, pageSize = 10, searchQuery } = params;
+
+    const skipAmount = (page - 1) * pageSize;
 
     const tagFilter: FilterQuery<typeof Tag> = { _id: tagId };
+
+    const query = searchQuery
+      ? { title: { $regex: searchQuery, $options: "i" } }
+      : {};
 
     const tag = await Tag.findOne(tagFilter).populate({
       path: "questions",
       model: Question,
-      match: searchQuery
-        ? { title: { $regex: searchQuery, $options: "i" } }
-        : {},
+      match: query,
       options: {
         sort: { createdAt: -1 },
+        skip: skipAmount,
+        limit: pageSize,
       },
       populate: [
         { path: "tags", model: Tag, select: "_id name" },
@@ -195,15 +201,25 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
       ],
     });
 
-    console.log("tag: ", tag);
-
     if (!tag) {
       throw new Error("Tag not found");
     }
 
     const questions = tag.questions;
 
-    return { tagTitle: tag.name, questions };
+    const tags = await Tag.findOne(tagFilter).populate({
+      path: "questions",
+      model: Question,
+      match: query,
+    });
+    const totalQuestions = tags.questions.length;
+    const isNext = totalQuestions > skipAmount + questions.length;
+
+    return {
+      tagTitle: tag.name,
+      questions,
+      isNext,
+    };
   } catch (error) {
     console.log("error getting question by tag id", error);
     throw error;
@@ -314,7 +330,9 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
   try {
     connectToDatabase();
 
-    const { clerkId, filter, searchQuery } = params;
+    const { clerkId, filter, searchQuery, page = 1, pageSize = 20 } = params;
+
+    const skipAmount = (page - 1) * pageSize;
 
     const query: FilterQuery<typeof Question> = searchQuery
       ? {
@@ -346,7 +364,7 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
         break;
     }
 
-    const user = await User.aggregate([
+    const userAggregation = await User.aggregate([
       { $match: { clerkId } },
       {
         $lookup: {
@@ -386,6 +404,8 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
       },
       { $match: query },
       { $sort: sortOptions },
+      { $skip: skipAmount },
+      { $limit: pageSize },
       {
         $group: {
           _id: "$_id",
@@ -394,11 +414,28 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
       },
     ]);
 
-    if (!user || user.length === 0) {
+    if (!userAggregation || userAggregation.length === 0) {
       throw new Error("User not found or no saved questions");
     }
 
-    return { questions: user[0].savedQuestions };
+    const user = userAggregation[0];
+
+    const savedQuestionAggregationArray = await User.aggregate([
+      { $match: { clerkId } },
+      { $unwind: "$saved" },
+      {
+        $match: {
+          "saved.question": { $exists: true },
+        },
+      },
+      { $group: { _id: null, count: { $sum: 1 } } },
+    ]);
+    const totalSavedQuestions = savedQuestionAggregationArray[0].count;
+
+    const isNext =
+      totalSavedQuestions > skipAmount + user.savedQuestions.length;
+
+    return { questions: user.savedQuestions, isNext };
   } catch (error) {
     console.log("error getting saved questions", error);
     throw error;

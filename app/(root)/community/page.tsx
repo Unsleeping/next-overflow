@@ -7,11 +7,13 @@ import UserCard from "@/components/cards/UserCard";
 import { getAllUsers } from "@/lib/actions/user.action";
 import { UserFilters } from "@/constants/filters";
 import { SearchParamsProps } from "@/types";
+import Pagination from "@/components/shared/Pagination";
 
 const CommunityPage = async ({ searchParams }: SearchParamsProps) => {
-  const users = await getAllUsers({
+  const result = await getAllUsers({
     searchQuery: searchParams.q,
     filter: searchParams.filter,
+    page: searchParams?.page ? +searchParams.page : 1,
   });
   return (
     <>
@@ -30,8 +32,8 @@ const CommunityPage = async ({ searchParams }: SearchParamsProps) => {
         />
       </div>
       <section className="mt-12 flex flex-wrap gap-4">
-        {users.length > 0 ? (
-          users.map((user) => <UserCard key={user._id} user={user} />)
+        {result.users.length > 0 ? (
+          result.users.map((user) => <UserCard key={user._id} user={user} />)
         ) : (
           <div className="paragraph-regular text-dark200_light800 mx-auto max-w-4xl text-center">
             <p>No users yet</p>
@@ -41,6 +43,12 @@ const CommunityPage = async ({ searchParams }: SearchParamsProps) => {
           </div>
         )}
       </section>
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={result.isNext}
+        />
+      </div>
     </>
   );
 };

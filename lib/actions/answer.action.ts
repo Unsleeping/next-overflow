@@ -49,7 +49,9 @@ export async function getAnswers(params: GetAnswersParams) {
   try {
     connectToDatabase();
 
-    const { questionId, sortBy } = params;
+    const { questionId, sortBy, pageSize = 10, page = 1 } = params;
+
+    const skipAmount = (page - 1) * pageSize;
 
     // to sort the answers by their createdAt date, descending order
     let sortOptions: Record<string, 1 | -1> = { createdAt: -1 };
@@ -76,9 +78,13 @@ export async function getAnswers(params: GetAnswersParams) {
         model: User,
         select: "_id clerkId name picture", // select specific properties
       })
-      .sort(sortOptions);
+      .sort(sortOptions)
+      .skip(skipAmount)
+      .limit(pageSize);
 
-    return { answers };
+    const totalAnswers = await Answer.countDocuments({ question: questionId });
+    const isNext = totalAnswers > skipAmount + answers.length;
+    return { answers, isNext };
   } catch (error) {
     console.log("error getting answers", error);
     throw error;

@@ -28,7 +28,7 @@ import { ITag } from "@/database/tag.model";
 
 interface QuestionFormProps {
   mongoUserId: string;
-  type: "create" | "edit";
+  type?: "create" | "edit";
   questionDetails?: string;
 }
 
