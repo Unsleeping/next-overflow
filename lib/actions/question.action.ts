@@ -109,8 +109,15 @@ export async function createQuestion(params: CreateQuestionParams) {
     });
 
     // create an interaction record for the user's ask_question action
+    await Interaction.create({
+      user: author,
+      action: "ask_question",
+      question: question._id,
+      tags: tagDocuments,
+    });
 
     // increment author's reputation by +5 for creating a question
+    await User.findByIdAndUpdate(author, { $inc: { reputation: 5 } });
 
     // purge the cached page for the question's path
     revalidatePath(path);
@@ -246,7 +253,15 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
       throw new Error("Question not found");
     }
 
-    // increment author's reputatuon by +10 for upvoting a question
+    // increment user's reputatuon by +1/-1 for upvoting/revoking a question
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasUpvoted ? -1 : 1 }, // hasUpvoted === has upvoted before the user click upvote
+    });
+
+    // increment author's reputation by +10/-10 for recieving an upvote/downvote to the question
+    await User.findByIdAndUpdate(question.author, {
+      $inc: { reputation: hasUpvoted ? -10 : 10 },
+    });
 
     revalidatePath(path);
   } catch (error) {
@@ -276,6 +291,15 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
     }
 
     // increment author's reputatuon by +10 for downvoting a question
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasDownvoted ? -1 : 1 },
+    });
+
+    await User.findByIdAndUpdate(question.author, {
+      $inc: { reputation: hasDownvoted ? -10 : 10 },
+    });
+
+    // todo: check the interaciton to your own to prevent exploit the rep
 
     revalidatePath(path);
   } catch (error) {

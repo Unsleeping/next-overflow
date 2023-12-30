@@ -31,11 +31,21 @@ export async function createAnswer(params: CreateAnswerParams) {
     });
 
     // Add the answer to the question's answers array
-    await Question.findByIdAndUpdate(question, {
+    const questionObject = await Question.findByIdAndUpdate(question, {
       $push: { answers: newAnswer._id },
     });
 
-    // TODO: Add interaction...
+    await Interaction.create({
+      user: author,
+      action: "answer",
+      question,
+      answer: newAnswer._id,
+      tags: questionObject.tags,
+    });
+
+    await User.findByIdAndUpdate(author, {
+      $inc: { reputation: 10 },
+    });
 
     // to update the page with new answer appeared
     revalidatePath(path);
@@ -112,6 +122,13 @@ export async function downvoteAnswer(params: AnswerVoteParams) {
     }
 
     // increment author's reputatuon by +10 for downvoting an answer
+    await User.findByIdAndUpdate(answer.author, {
+      $inc: { reputation: hasDownvoted ? -10 : 10 },
+    });
+
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasDownvoted ? -2 : 2 },
+    });
 
     revalidatePath(path);
   } catch (error) {
@@ -140,6 +157,13 @@ export async function upvoteAnswer(params: AnswerVoteParams) {
     }
 
     // increment author's reputatuon by +10 for upvoting an answer
+    await User.findByIdAndUpdate(answer.author, {
+      $inc: { reputation: hasUpvoted ? -10 : 10 },
+    });
+
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasUpvoted ? -2 : 2 },
+    });
 
     revalidatePath(path);
   } catch (error) {
