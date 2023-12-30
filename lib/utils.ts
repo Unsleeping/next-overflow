@@ -1,5 +1,6 @@
-import { Mode } from "@/types";
+import { BadgeCounts, Mode } from "@/types";
 import {
+  BADGE_CRITERIA,
   DARK_TINY_MCE_CONFIG,
   LIGHT_TINY_MCE_CONFIG,
 } from "./../constants/index";
@@ -75,4 +76,34 @@ export const formatAndDivideNumber = (num: number): string => {
 
 export const getTinyMCEConfig = (mode: Mode) => {
   return mode === "dark" ? DARK_TINY_MCE_CONFIG : LIGHT_TINY_MCE_CONFIG;
+};
+
+type BadgeParam = {
+  criteria: {
+    type: keyof typeof BADGE_CRITERIA;
+    count: number;
+  }[];
+};
+
+export const assignBadges = (params: BadgeParam) => {
+  const badgeCounts: BadgeCounts = {
+    GOLD: 0,
+    SILVER: 0,
+    BRONZE: 0,
+  };
+
+  const { criteria } = params;
+
+  criteria.forEach((item) => {
+    const { type, count } = item;
+    const badgeLevels: any = BADGE_CRITERIA[type];
+
+    Object.keys(badgeLevels).forEach((level: any) => {
+      if (count >= badgeLevels[level]) {
+        badgeCounts[level as keyof BadgeCounts] += 1;
+      }
+    });
+  });
+
+  return badgeCounts;
 };
