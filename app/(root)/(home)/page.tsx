@@ -1,5 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
+import type { Metadata } from "next";
 
 import { Button } from "@/components/ui/button";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
@@ -11,6 +12,12 @@ import QuestionCard from "@/components/cards/QuestionCard";
 import { getQuestions } from "@/lib/actions/question.action";
 import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
+
+export const metadata: Metadata = {
+  title: "Home | Next Overflow",
+  description:
+    "Next overflow is a community of 1,000,000+ developers. Join us.",
+};
 
 const Home = async ({ searchParams }: SearchParamsProps) => {
   const result = await getQuestions({
