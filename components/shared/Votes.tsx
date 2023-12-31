@@ -12,6 +12,7 @@ import {
 } from "@/lib/actions/question.action";
 import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.action";
 import { viewQuestion } from "@/lib/actions/interaction.action";
+import { toast } from "../ui/use-toast";
 
 interface VotesProps {
   type: string;
@@ -46,6 +47,10 @@ const Votes: React.FC<VotesProps> = ({
 
   const handleVote = async (action: string) => {
     if (!userId) {
+      toast({
+        title: "Please log in",
+        description: "You must be logged in to perform this action",
+      });
       return;
     }
     if (action === "upvote") {
@@ -66,7 +71,10 @@ const Votes: React.FC<VotesProps> = ({
           path: pathname,
         });
       }
-      // todo: show a toast
+      toast({
+        title: `Upvote ${!hasUpvoted ? "Successful" : "Removed"}`,
+        variant: !hasUpvoted ? "default" : "destructive",
+      });
       return;
     }
 
@@ -88,7 +96,10 @@ const Votes: React.FC<VotesProps> = ({
           path: pathname,
         });
       }
-      // todo: show a toast
+      toast({
+        title: `Downvote ${!hasUpvoted ? "Successful" : "Removed"}`,
+        variant: !hasUpvoted ? "default" : "destructive",
+      });
     }
   };
   const handleSave = async () => {
@@ -100,6 +111,13 @@ const Votes: React.FC<VotesProps> = ({
         questionId: JSON.parse(itemId),
         userId: JSON.parse(userId),
         path: pathname,
+      });
+
+      toast({
+        title: `Question ${
+          !hasSaved ? "Saved in" : "Removed from"
+        } your collection`,
+        variant: !hasSaved ? "default" : "destructive",
       });
     }
   };
