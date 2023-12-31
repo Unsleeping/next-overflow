@@ -153,7 +153,7 @@ const QuestionForm = ({
               <FormControl className="mt-3.5">
                 <Editor
                   apiKey={process.env.NEXT_PUBLIC_TINY_MCE_KEY}
-                  initialValue={field.value || ""}
+                  value={field.value || ""}
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
                   init={getTinyMCEConfig(mode)}

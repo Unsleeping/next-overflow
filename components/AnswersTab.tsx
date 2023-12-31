@@ -21,7 +21,7 @@ const AnswersTab: React.FC<AnswersTabProps> = async ({
   });
   return (
     <>
-      <div className="mt-10 flex w-full flex-col gap-6">
+      <div className="mt-5 flex w-full flex-col gap-6">
         {result.answers.map((answer) => (
           <AnswerCard
             key={answer._id}

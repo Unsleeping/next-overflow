@@ -2,11 +2,10 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { deleteQuestion } from "@/lib/actions/question.action";
 import { deleteAnswer } from "@/lib/actions/answer.action";
-import Link from "next/link";
 
 interface EditDeleteActionProps {
   type: "Question" | "Answer";
@@ -18,6 +17,7 @@ const EditDeleteAction: React.FC<EditDeleteActionProps> = ({
   itemId,
 }) => {
   const pathname = usePathname();
+  const router = useRouter();
   const handleDelete = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -36,15 +36,14 @@ const EditDeleteAction: React.FC<EditDeleteActionProps> = ({
   return (
     <div className="flex items-center justify-end gap-3 max-sm:w-full">
       {type === "Question" && (
-        <Link href={`/question/edit/${JSON.parse(itemId)}`}>
-          <Image
-            src="/assets/icons/edit.svg"
-            alt="edit"
-            width={14}
-            height={14}
-            className="cursor-pointer object-contain"
-          />
-        </Link>
+        <Image
+          src="/assets/icons/edit.svg"
+          alt="edit"
+          width={14}
+          height={14}
+          className="cursor-pointer object-contain"
+          onClick={() => router.push(`/question/edit/${JSON.parse(itemId)}`)}
+        />
       )}
       <Image
         src="/assets/icons/trash.svg"

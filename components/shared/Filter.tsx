@@ -51,13 +51,13 @@ const Filter: React.FC<FilterProps> = ({
             <SelectValue placeholder="Select a Filter" />
           </div>
         </SelectTrigger>
-        <SelectContent className="background-light900_dark200">
+        <SelectContent className="text-dark500_light700 small-regular border-none bg-light-900 dark:bg-dark-300">
           <SelectGroup>
             {filters.map((filter) => (
               <SelectItem
                 key={filter.value}
                 value={filter.value}
-                className="text-dark500_light700"
+                className="cursor-pointer focus:bg-light-800 dark:focus:bg-dark-400"
               >
                 {filter.name}
               </SelectItem>

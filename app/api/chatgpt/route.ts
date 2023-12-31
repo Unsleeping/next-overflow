@@ -24,6 +24,7 @@ export const POST = async (request: Request) => {
     });
 
     const responseData = await response.json();
+    console.log("responseData: ", responseData);
     const reply = responseData.data.choices[0].message.content;
     return NextResponse.json({ reply });
   } catch (error) {
