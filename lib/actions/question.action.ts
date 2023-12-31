@@ -446,19 +446,27 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
 
     const savedQuestionAggregationArray = await User.aggregate([
       { $match: { clerkId } },
-      { $unwind: "$saved" },
       {
-        $match: {
-          "saved.question": { $exists: true },
+        $lookup: {
+          from: "questions",
+          localField: "saved.question",
+          foreignField: "_id",
+          as: "savedQuestions",
         },
       },
-      { $group: { _id: null, count: { $sum: 1 } } },
+      { $unwind: "$savedQuestions" },
+      {
+        $group: {
+          _id: "$_id",
+          savedQuestions: { $push: "$savedQuestions" },
+        },
+      },
     ]);
-    const totalSavedQuestions = savedQuestionAggregationArray[0].count;
+    const totalSavedQuestions =
+      savedQuestionAggregationArray[0].savedQuestions.length;
 
     const isNext =
       totalSavedQuestions > skipAmount + user.savedQuestions.length;
-
     return { questions: user.savedQuestions, isNext };
   } catch (error) {
     console.log("error getting saved questions", error);
