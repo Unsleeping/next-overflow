@@ -1,4 +1,5 @@
 import * as React from "react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import Navbar from "@/components/navbar/Navbar";
 import LeftSidebar from "@/components/LeftSidebar";
@@ -21,6 +22,7 @@ const Layout = ({ children }: LayoutProps) => {
         <RightSidebar />
       </div>
       <Toaster />
+      <SpeedInsights />
     </main>
   );
 };
